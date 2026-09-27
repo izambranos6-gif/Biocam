@@ -1,4 +1,4 @@
-    import 'package:flutter/material.dart';
+ import 'package:flutter/material.dart';
 
     void main() {
       runApp(const BiocamApp());
@@ -651,13 +651,19 @@
                     children: [
                       Positioned(
                         right: 22,
-                        top: 4,
-                        child: SizedBox(
-                          width: 100,
-                          height: 100,
-                          child: Image.asset(
-                            'assets/images/camaron_das.png',
-                            fit: BoxFit.contain,
+                        top: 0,
+                        bottom: 0,
+                        child: Center(
+                          child: Transform.translate(
+                            offset: const Offset(0, -10),
+                            child: SizedBox(
+                              width: 100,
+                              height: 100,
+                              child: Image.asset(
+                                'assets/images/camaron_das.png',
+                                fit: BoxFit.contain,
+                              ),
+                            ),
                           ),
                         ),
                       ),
@@ -1145,6 +1151,22 @@
       }
 
       void calcular() {
+        if (cantidadController.text.trim().isEmpty ||
+            lancesController.text.trim().isEmpty ||
+            atarrayaController.text.trim().isEmpty ||
+            hectareasController.text.trim().isEmpty ||
+            gramajeController.text.trim().isEmpty) {
+          setState(() {
+            mostrar = false;
+          });
+
+          mensajeSnack(
+            context,
+            'Completa todos los campos para calcular la biomasa.',
+          );
+          return;
+        }
+
         final cantidad =
             valor(cantidadController);
         final lances =
@@ -1161,9 +1183,13 @@
             atarraya <= 0 ||
             hectareas <= 0 ||
             gramaje <= 0) {
+          setState(() {
+            mostrar = false;
+          });
+
           mensajeSnack(
             context,
-            'Completa todos los campos.',
+            'Ingresa valores mayores a 0 en todos los campos.',
           );
 
           return;
@@ -4359,17 +4385,49 @@
               color: Colors.white70,
             ),
             labelText: titulo,
-            suffixText: unidad,
             labelStyle:
                 const TextStyle(
               color:
                   Colors.white54,
             ),
-            suffixStyle:
-                const TextStyle(
-              color:
-                  Colors.white54,
-            ),
+            suffixIcon: unidad != null
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(
+                      right: 10,
+                      top: 10,
+                      bottom: 10,
+                    ),
+                    child: Container(
+                      constraints:
+                          const BoxConstraints(
+                        minWidth: 42,
+                      ),
+                      padding:
+                          const EdgeInsets.symmetric(
+                        horizontal: 10,
+                      ),
+                      decoration:
+                          BoxDecoration(
+                        color: Colors.white10,
+                        borderRadius:
+                            BorderRadius.circular(10),
+                      ),
+                      alignment:
+                          Alignment.center,
+                      child: Text(
+                        unidad,
+                        style:
+                            const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 12,
+                          fontWeight:
+                              FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  )
+                : null,
             border: InputBorder.none,
           ),
         ),
