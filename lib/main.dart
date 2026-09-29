@@ -1139,6 +1139,11 @@
 
       bool mostrar = false;
 
+      // Forma de ingreso del tamaño de la atarraya:
+      // Metros = Biocam calcula m × m.
+      // m² = se usa directamente el área ingresada.
+      String tipoAtarraya = 'm²';
+
       double valor(
         TextEditingController controller,
       ) {
@@ -1195,11 +1200,16 @@
           return;
         }
 
+        final areaAtarraya = tipoAtarraya == 'Metros'
+              ? (3.141592653589793 * (atarraya / 2) * (atarraya / 2) * 0.85)
+              .roundToDouble()
+              : atarraya;
+
         camaronLance =
             cantidad / lances;
 
         camaronM2 =
-            camaronLance / atarraya;
+            camaronLance / areaAtarraya;
 
         final metrosCuadrados =
             hectareas * 10000;
@@ -1293,12 +1303,131 @@
 
                       const SizedBox(height: 9),
 
-                      campoOscuro(
-                        atarrayaController,
-                        'Tamaño de atarraya',
-                        Icons.straighten_rounded,
-                        unidad: 'm²',
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: AppColors.darkSoft,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 3,
+                              ),
+                              child: Row(
+                                children: [
+                                  const Icon(
+                                    Icons.straighten_rounded,
+                                    color: Colors.white70,
+                                    size: 22,
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Expanded(
+                                    child: TextField(
+                                      controller: atarrayaController,
+                                      onChanged: (_) {
+                                        setState(() {
+                                          mostrar = false;
+                                        });
+                                      },
+                                      keyboardType:
+                                          const TextInputType.numberWithOptions(
+                                        decimal: true,
+                                      ),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                      ),
+                                      decoration: const InputDecoration(
+                                        labelText: 'Tamaño de atarraya',
+                                        labelStyle: TextStyle(
+                                          color: Colors.white54,
+                                        ),
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                        contentPadding: EdgeInsets.symmetric(
+                                          vertical: 15,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Container(
+                            width: 118,
+                            height: 58,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.darkSoft,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                value: tipoAtarraya,
+                                isExpanded: true,
+                                dropdownColor: AppColors.darkSoft,
+                                icon: const Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: Colors.white70,
+                                ),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                                items: const [
+                                  DropdownMenuItem(
+                                    value: 'm²',
+                                    child: Text('m²'),
+                                  ),
+                                  DropdownMenuItem(
+                                    value: 'Metros',
+                                    child: Text('Metros'),
+                                  ),
+                                ],
+                                onChanged: (value) {
+                                  if (value == null ||
+                                      value == tipoAtarraya) {
+                                    return;
+                                  }
+
+                                  setState(() {
+                                    tipoAtarraya = value;
+                                    atarrayaController.clear();
+                                    mostrar = false;
+                                  });
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+
+                      if (atarrayaController.text.trim().isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            top: 7,
+                            left: 4,
+                          ),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              tipoAtarraya == 'Metros'
+                                  ? 'Área calculada: ${formatoNumero(valor(atarrayaController) * valor(atarrayaController))} m²'
+                                  : 'Área usada: ${formatoNumero(valor(atarrayaController))} m²',
+                              style: const TextStyle(
+                                color: Colors.white54,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ),
 
                       const SizedBox(height: 9),
 
@@ -4364,72 +4493,66 @@
       return Container(
         decoration: BoxDecoration(
           color: AppColors.darkSoft,
-          borderRadius:
-              BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(16),
         ),
-        child: TextField(
-          controller: controller,
-          keyboardType:
-              const TextInputType
-                  .numberWithOptions(
-            decimal: true,
-          ),
-          style:
-              const TextStyle(
-            color: Colors.white,
-          ),
-          decoration:
-              InputDecoration(
-            prefixIcon: Icon(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 3,
+        ),
+        child: Row(
+          children: [
+            Icon(
               icono,
               color: Colors.white70,
+              size: 22,
             ),
-            labelText: titulo,
-            labelStyle:
-                const TextStyle(
-              color:
-                  Colors.white54,
+            const SizedBox(width: 10),
+            Expanded(
+              child: TextField(
+                controller: controller,
+                keyboardType:
+                    const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                style: const TextStyle(
+                  color: Colors.white,
+                ),
+                decoration: InputDecoration(
+                  labelText: titulo,
+                  labelStyle: const TextStyle(
+                    color: Colors.white54,
+                  ),
+                  border: InputBorder.none,
+                  isDense: true,
+                  contentPadding:
+                      const EdgeInsets.symmetric(
+                    vertical: 15,
+                  ),
+                ),
+              ),
             ),
-            suffixIcon: unidad != null
-                ? Padding(
-                    padding:
-                        const EdgeInsets.only(
-                      right: 10,
-                      top: 10,
-                      bottom: 10,
-                    ),
-                    child: Container(
-                      constraints:
-                          const BoxConstraints(
-                        minWidth: 42,
-                      ),
-                      padding:
-                          const EdgeInsets.symmetric(
-                        horizontal: 10,
-                      ),
-                      decoration:
-                          BoxDecoration(
-                        color: Colors.white10,
-                        borderRadius:
-                            BorderRadius.circular(10),
-                      ),
-                      alignment:
-                          Alignment.center,
-                      child: Text(
-                        unidad,
-                        style:
-                            const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 12,
-                          fontWeight:
-                              FontWeight.w700,
-                        ),
-                      ),
-                    ),
-                  )
-                : null,
-            border: InputBorder.none,
-          ),
+            if (unidad != null) ...[
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 9,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Text(
+                  unidad,
+                  style: const TextStyle(
+                    color: Colors.white70,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ],
         ),
       );
     }
@@ -4475,14 +4598,6 @@
                     fontSize: 16,
                     fontWeight:
                         FontWeight.w900,
-                  ),
-                ),
-                const Text(
-                  'camarones',
-                  style: TextStyle(
-                    color:
-                        Colors.white54,
-                    fontSize: 8,
                   ),
                 ),
               ],
@@ -4536,13 +4651,16 @@
                   ),
                 ),
               ),
+              const SizedBox(height: 2),
               Text(
                 titulo,
                 style:
                     const TextStyle(
                   color:
-                      Colors.white60,
-                  fontSize: 8,
+                      Colors.white70,
+                  fontSize: 13,
+                  fontWeight:
+                      FontWeight.w700,
                 ),
               ),
             ],
