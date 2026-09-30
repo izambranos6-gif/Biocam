@@ -731,7 +731,7 @@
                       child: tarjetaResumenBonita(
                         icono: Icons.check_rounded,
                         valor: '$pagadas',
-                        titulo: 'Pagadas',
+                        titulo: 'Liquidadas',
                         fondo: const Color(0xFFE9F7EF),
                       ),
                     ),
