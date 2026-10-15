@@ -11,6 +11,12 @@ jobs:
       - name: Descargar codigo
         uses: actions/checkout@v4
 
+      - name: Instalar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Instalar Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -20,11 +26,30 @@ jobs:
       - name: Instalar dependencias
         run: flutter pub get
 
-      - name: Generar APK
+      - name: Restaurar firma Biocam
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > biocam-release-key.jks
+
+      - name: Crear key.properties
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        run: |
+          cat > android/key.properties <<EOF
+          storePassword=$KEYSTORE_PASSWORD
+          keyPassword=$KEY_PASSWORD
+          keyAlias=$KEY_ALIAS
+          storeFile=../../biocam-release-key.jks
+          EOF
+
+      - name: Generar APK firmado
         run: flutter build apk --release
 
       - name: Subir APK
         uses: actions/upload-artifact@v4
         with:
-          name: Biocam-APK
+          name: Biocam-APK-Firmado
           path: build/app/outputs/flutter-apk/app-release.apk

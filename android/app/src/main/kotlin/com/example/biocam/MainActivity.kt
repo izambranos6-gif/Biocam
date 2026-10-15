@@ -1,4 +1,4 @@
-package com.example.biocam
+package com.biocam.biocam
 
 import io.flutter.embedding.android.FlutterActivity
 
