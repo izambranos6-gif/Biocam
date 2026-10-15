@@ -111,7 +111,7 @@ part of '../../main.dart';
         return motivo;
       }
 
-      void guardar() {
+      Future<void> guardar() async {
         if (motivo == 'Sin descuento') {
           descuentoController.text = '0';
         }
@@ -156,6 +156,12 @@ part of '../../main.dart';
             precio;
         widget.pesca.liquidada =
             true;
+
+        await AppData.guardarLiquidacion(
+          widget.pesca,
+        );
+
+        if (!mounted) return;
 
         Navigator.pop(context);
       }

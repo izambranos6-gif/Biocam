@@ -99,7 +99,7 @@ part of '../../main.dart';
         });
       }
 
-      void guardarPesca() {
+      Future<void> guardarPesca() async {
         final gramaje = double.tryParse(
           gramajeController.text.trim().replaceAll(',', '.'),
         );
@@ -129,6 +129,12 @@ part of '../../main.dart';
           unidad: unidad,
           detalles: detalles,
         );
+
+        await AppData.guardarPesca(
+          pesca,
+        );
+
+        if (!mounted) return;
 
         Navigator.pushReplacement(
           context,

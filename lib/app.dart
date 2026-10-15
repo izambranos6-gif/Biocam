@@ -63,7 +63,7 @@ part of 'main.dart';
           upperBound: 1.0,
         )..repeat(reverse: true);
 
-        Future.delayed(const Duration(milliseconds: 4000), () {
+        Future.delayed(const Duration(milliseconds: 2500), () {
           if (!mounted) return;
 
           Navigator.of(context).pushReplacement(

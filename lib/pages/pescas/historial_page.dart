@@ -177,97 +177,147 @@ part of '../../main.dart';
                   child: Column(
                     children: [
                       TextField(
-                        controller:
-                            buscarController,
+                        controller: buscarController,
                         onChanged: (_) {
                           setState(() {});
                         },
-                        decoration:
-                            inputClaro(
+                        decoration: inputClaro(
                           'Buscar por nombre',
                           Icons.search,
                         ),
                       ),
 
-                      const SizedBox(height: 12),
-
-                      Wrap(
-                        spacing: 6,
-                        runSpacing: 5,
-                        children: [
-                          chipEstado(
-                            'Todas',
-                          ),
-                          chipEstado(
-                            'Sin liquidar',
-                          ),
-                          chipEstado(
-                            'Pendiente',
-                          ),
-                          chipEstado(
-                            'Pago parcial',
-                          ),
-                          chipEstado(
-                            'Pagadas',
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 12),
+                      const SizedBox(height: 10),
 
                       Row(
                         children: [
                           Expanded(
-                            child:
-                                OutlinedButton.icon(
-                              onPressed:
-                                  seleccionarFecha,
-                              icon:
-                                  const Text(
-                                '📅',
+                            child: Container(
+                              height: 46,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
                               ),
-                              label: Text(
-                                filtroFecha ==
-                                        null
-                                    ? 'Todas las fechas'
-                                    : formatoFecha(
-                                        filtroFecha!,
-                                      ),
+                              decoration: BoxDecoration(
+                                color: AppColors.background,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(
+                                  color: Colors.black26,
+                                ),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  value: filtroEstado,
+                                  isExpanded: true,
+                                  icon: const Icon(
+                                    Icons.keyboard_arrow_down_rounded,
+                                  ),
+                                  selectedItemBuilder: (context) {
+                                    return [
+                                      'Todas',
+                                      'Sin liquidar',
+                                      'Pendiente',
+                                      'Pago parcial',
+                                      'Pagadas',
+                                    ].map(
+                                      (item) {
+                                        return Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Estado: $item',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 11,
+                                              color: AppColors.text,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ).toList();
+                                  },
+                                  items: [
+                                    'Todas',
+                                    'Sin liquidar',
+                                    'Pendiente',
+                                    'Pago parcial',
+                                    'Pagadas',
+                                  ].map(
+                                    (item) {
+                                      return DropdownMenuItem<String>(
+                                        value: item,
+                                        child: Text(
+                                          item,
+                                          style: const TextStyle(
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ).toList(),
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      setState(() {
+                                        filtroEstado = value;
+                                      });
+                                    }
+                                  },
+                                ),
                               ),
                             ),
                           ),
 
-                          if (filtroFecha !=
-                              null)
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  filtroFecha =
-                                      null;
-                                });
-                              },
-                              icon:
-                                  const Icon(
-                                Icons.close,
+                          const SizedBox(width: 8),
+
+                          Expanded(
+                            child: SizedBox(
+                              height: 46,
+                              child: OutlinedButton.icon(
+                                onPressed: seleccionarFecha,
+                                icon: const Text(
+                                  '📅',
+                                ),
+                                label: Text(
+                                  filtroFecha == null
+                                      ? 'Todas las fechas'
+                                      : formatoFecha(
+                                          filtroFecha!,
+                                        ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontSize: 11,
+                                  ),
+                                ),
                               ),
                             ),
+                          ),
                         ],
                       ),
 
-                      TextButton(
-                        onPressed:
-                            limpiarFiltros,
-                        child: const Text(
-                          'Limpiar filtros',
-                        ),
+                      const SizedBox(height: 4),
+
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              '${resultados.length} pescas encontradas',
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: limpiarFiltros,
+                            child: const Text(
+                              'Limpiar',
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ),
-              ),
-
-              Text(
-                '${resultados.length} pescas encontradas',
               ),
 
               const SizedBox(height: 6),
@@ -461,26 +511,4 @@ part of '../../main.dart';
         );
       }
 
-      Widget chipEstado(String texto) {
-        final seleccionado =
-            filtroEstado == texto;
-
-        return ChoiceChip(
-          label: Text(texto),
-          selected: seleccionado,
-          showCheckmark: false,
-          selectedColor: AppColors.black,
-          labelStyle: TextStyle(
-            color: seleccionado
-                ? Colors.white
-                : AppColors.text,
-            fontSize: 10,
-          ),
-          onSelected: (_) {
-            setState(() {
-              filtroEstado = texto;
-            });
-          },
-        );
-      }
     }
