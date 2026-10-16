@@ -302,26 +302,6 @@ part of '../../main.dart';
                         ],
                       ),
 
-                      if (atarrayaController.text.trim().isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(
-                            top: 7,
-                            left: 4,
-                          ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: Text(
-                              tipoAtarraya == 'Metros'
-                                  ? 'Área calculada: ${formatoNumero(valor(atarrayaController) * valor(atarrayaController))} m²'
-                                  : 'Área usada: ${formatoNumero(valor(atarrayaController))} m²',
-                              style: const TextStyle(
-                                color: Colors.white54,
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ),
 
                       const SizedBox(height: 9),
 
